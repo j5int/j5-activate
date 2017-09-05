@@ -1,0 +1,6 @@
+# Helper functions
+
+J5_ACTIVATE_HELPERS_DIR="`dirname "$BASH_SOURCE"`"
+J5_ACTIVATE_DIR="`dirname "$J5_ACTIVATE_HELPERS_DIR"`"
+J5_PARENT_GIT_DIR="`dirname "$J5_ACTIVATE_DIR"`"
+
