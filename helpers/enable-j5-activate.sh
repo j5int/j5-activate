@@ -7,7 +7,8 @@
 }
 
 _this_script="`readlink -f "$BASH_SOURCE"`"
-. "`dirname "$_this_script"`"/include.sh
+. "`dirname "$_this_script"`/include.sh"
+. "$J5_ACTIVATE_HELPERS_DIR/colored-echo.sh"
 
 j5activate() {
     if [ "$#" == 0 ]; then
@@ -17,9 +18,21 @@ j5activate() {
         return 1
     else
         J5DIR=$J5_PARENT_GIT_DIR/j5-framework-$1/j5/src/
-        [ -d "$J5DIR" ] || { echo Could not locate j5 framework - $J5DIR does not exist >&2 ; return 1 ; }
+        [ -d "$J5DIR" ] || { colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2 ; return 1 ; }
     fi
-    [ -f "$J5DIR/Scripts/j5activate.sh" ] || { echo The j5 framework version in $J5DIR does not support j5activate >&2 ; return 1 ; }
-    source "$J5DIR/Scripts/j5activate.sh"
+    if [ -f "$J5DIR/Scripts/j5activate.sh" ]; then
+        source "$J5DIR/Scripts/j5activate.sh"
+    else
+        J5VER=j5-$(grep "^version_code: " $J5DIR/j5-app.yml | sed 's/version_code: \(.*\)/\1/')
+        [ "$WORKON_HOME" == "" ] && WORKON_HOME="$HOME/.virtualenvs"
+        if [ -d "$WORKON_HOME/$J5VER" ]; then
+            colored_echo yellow "A virtual environment $J5VER seems to exist - will try workon $J5VER" >&2
+            workon $J5VER
+            colored_echo blue "Note that this is a version of j5 that does not support a full j5 environment" >&2
+        else
+            colored_echo red "The j5 framework version in $J5DIR does not support j5activate, and no legacy virtualenv was found" >&2
+            return 1
+        fi
+    fi
 }
 
