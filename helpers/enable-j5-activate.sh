@@ -16,7 +16,9 @@ j5activate() {
         echo syntax j5activate "[framework-src-label]"
     else
         J5DIR=$J5_PARENT_GIT_DIR/j5-framework-$1/j5/src/
+        [ -d "$J5DIR" ] || { echo Could not locate j5 framework - $J5DIR does not exist >&2 ; return ; }
     fi
+    [ -f "$J5DIR/Scripts/j5activate.sh" ] || { echo The j5 framework version in $J5DIR does not support j5activate >&2 ; return ; }
     source "$J5DIR/Scripts/j5activate.sh"
 }
 
