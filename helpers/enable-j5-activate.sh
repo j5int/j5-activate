@@ -13,6 +13,24 @@ _this_script="`readlink -f "$BASH_SOURCE"`"
 j5activate() {
     if [ "$#" == 0 ]; then
         J5DIR=$J5_PARENT_GIT_DIR/j5-framework/j5/src/
+        if [ ! -d "$J5DIR" ]; then
+           src_markers=($J5_PARENT_GIT_DIR/*/j5/src/j5-app.yml)
+           if [ "${#src_markers[@]}" == 1 ] && [ -f "${src_markers[0]}" ]; then
+               J5DIR="`dirname "${src_markers[0]}"`"
+               colored_echo blue "Found j5 framework at $J5DIR" >&2
+           elif [ "${#src_markers[@]}" == 0 ] || [ ! -f "${src_markers[0]}" ]; then
+               colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2
+               return 1
+           else
+               colored_echo red "Found multiple j5 framework directories. Cannot determine which to activate" >&2
+               for src_marker in "${src_markers[@]}"; do
+                   src_dir="`dirname "${src_marker}"`"
+                   src_dir="`readlink -f "${src_dir}/../../"`"
+                   colored_echo yellow "${src_dir}" >&2
+               done
+               return 1
+           fi
+        fi
     elif [ "${1#-}" != "$1" ]; then
         echo syntax j5activate "[framework-src-label]"
         return 1
