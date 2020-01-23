@@ -3,6 +3,7 @@ if "%1"=="-?" goto usage
 if "%1"=="/?" goto usage
 if "%1"=="-h" goto usage
 if "%1"=="/h" goto usage
+if "%1"=="--python3" goto nolabel
 
 if [%1]==[] goto nolabel
 
@@ -29,11 +30,11 @@ echo Found source directory at %src_dir%
 goto :activate
 
 :activate
-call "%src_dir%\j5\src\Scripts\helpers\j5activate.cmd"
+call "%src_dir%\j5\src\Scripts\helpers\j5activate.cmd" %*
 goto :eof
 
 :usage
-@echo syntax j5activate [framework-src-label]
+@echo syntax j5activate [framework-src-label] [--python3]
 goto :eof
 
 :error
