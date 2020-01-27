@@ -31,6 +31,8 @@ goto :activate
 
 :activate
 call "%src_dir%\j5\src\Scripts\helpers\j5activate.cmd" %*
+if %ERRORLEVEL% GEQ 1 goto :error
+set src_dir=
 goto :eof
 
 :usage
@@ -38,4 +40,6 @@ goto :eof
 goto :eof
 
 :error
-exit 1
+set src_dir=
+echo j5activate failed >&2
+exit /b 1
