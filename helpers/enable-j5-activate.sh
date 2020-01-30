@@ -12,11 +12,14 @@ _this_script="`readlink -f "$BASH_SOURCE"`"
 
 j5activate() {
     show_syntax=""
+    activate_args=""
     target_version=""
     for arg in "$@"; do
         case "$arg" in
             -h|-?|--help)
                show_syntax=1; shift;;
+            --python3)
+               activate_args=--python3; shift;;
             -*)
                colored_echo red "Unexpected options $arg" >&2
                show_syntax=1; shift;;
@@ -56,7 +59,7 @@ j5activate() {
         [ -d "$J5DIR" ] || { colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2 ; return 1 ; }
     fi
     if [ -f "$J5DIR/Scripts/j5activate.sh" ]; then
-        source "$J5DIR/Scripts/j5activate.sh"
+        source "$J5DIR/Scripts/j5activate.sh" $activate_args
     else
         J5VER=j5-$(grep "^version_code: " $J5DIR/j5-app.yml | sed 's/version_code: \(.*\)/\1/')
         J5_SERVICE_PACK=$(grep "^service_pack_code: " $J5DIR/j5-app.yml | sed 's/service_pack_code: \([0-9][0-9]*\).*$/\1/')
