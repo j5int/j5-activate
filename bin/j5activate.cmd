@@ -36,7 +36,7 @@ echo Found source directory at %src_dir%
 goto :activate
 
 :activate
-call "%src_dir%\j5\src\Scripts\helpers\j5activate.cmd" %activate_args%
+call "%src_dir%\j5\src\Scripts\helpers\j5activate.cmd" %* %activate_args%
 if %ERRORLEVEL% GEQ 1 goto :error
 set src_dir=
 goto :end
