@@ -56,9 +56,11 @@ set src_dir=
 echo j5activate failed >&2
 set activate_path=
 set activate_args=
+set first_arg=
 exit /b 1
 
 :end
 rem clearing variables
 set activate_path=
 set activate_args=
+set first_arg=
