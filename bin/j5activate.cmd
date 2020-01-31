@@ -10,6 +10,9 @@ if "%1"=="--python3" (
     set activate_args=--python3
     shift
 )
+set "first_arg=%1"
+if "%first_arg:~0,1%"=="-" goto usage
+if "%first_arg:~0,1%"=="/" goto usage
 
 if [%1]==[] goto nolabel
 
