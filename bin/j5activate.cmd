@@ -14,6 +14,7 @@ if "%1"=="--python3" (
 if [%1]==[] goto nolabel
 
 set "src_dir=%activate_path%\..\..\j5-framework-%1"
+if not exist "%src_dir%" echo Could not find j5-framework-%1 >&2 & goto :error
 goto :activate
 
 :nolabel
@@ -21,6 +22,7 @@ goto :activate
 set "src_dir=%activate_path%\..\..\j5-framework"
 if exist "%src_dir%" goto :activate
 
+echo Could not find j5-framework, searching for alternative locations
 set "tmpfile=%tmp%\j5path_%RANDOM%.txt"
 powershell -NoProfile -ExecutionPolicy unrestricted -File "%activate_path%\find_j5_src.ps1" > "%tmpfile%"
 set failure=%errorlevel%
