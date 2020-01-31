@@ -5,6 +5,7 @@ if "%1"=="-?" goto usage
 if "%1"=="/?" goto usage
 if "%1"=="-h" goto usage
 if "%1"=="/h" goto usage
+if "%1"=="--help" goto usage
 if "%1"=="--python3" (
     set activate_args=--python3
     shift
