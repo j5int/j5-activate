@@ -11,7 +11,30 @@ _this_script="`readlink -f "$BASH_SOURCE"`"
 . "$J5_ACTIVATE_HELPERS_DIR/colored-echo.sh"
 
 j5activate() {
-    if [ "$#" == 0 ]; then
+    show_syntax=""
+    activate_args=""
+    target_version=""
+    for arg in "$@"; do
+        case "$arg" in
+            -h|-?|--help)
+               show_syntax=1; shift;;
+            --python3)
+               activate_args=--python3; shift;;
+            -*)
+               colored_echo red "Unexpected options $arg" >&2
+               show_syntax=1; shift;;
+            [0-9][0-9][.][0-9])
+               [ "$target_version" != "" ] && { colored_echo red "Only one j5 version can be specified" >&2; break; }
+               target_version="$arg"; shift;;
+            *)
+               colored_echo red "Unexpected argument $arg" >&2
+               show_syntax=1; shift;;
+        esac
+    done
+    if [ "$show_syntax" != "" ]; then
+        echo syntax j5activate "[framework-src-label]"
+        return 1
+    elif [ "$target_version" == "" ]; then
         J5DIR="$J5_PARENT_GIT_DIR/j5-framework/j5/src/"
         if [ ! -d "$J5DIR" ]; then
            src_markers=($J5_PARENT_GIT_DIR/*/j5/src/j5-app.yml)
@@ -31,15 +54,12 @@ j5activate() {
                return 1
            fi
         fi
-    elif [ "${1#-}" != "$1" ]; then
-        echo syntax j5activate "[framework-src-label]"
-        return 1
     else
-        J5DIR="$J5_PARENT_GIT_DIR/j5-framework-$1/j5/src/"
+        J5DIR="$J5_PARENT_GIT_DIR/j5-framework-$target_version/j5/src/"
         [ -d "$J5DIR" ] || { colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2 ; return 1 ; }
     fi
     if [ -f "$J5DIR/Scripts/j5activate.sh" ]; then
-        source "$J5DIR/Scripts/j5activate.sh"
+        source "$J5DIR/Scripts/j5activate.sh" $activate_args
     else
         J5VER=j5-$(grep "^version_code: " $J5DIR/j5-app.yml | sed 's/version_code: \(.*\)/\1/')
         J5_SERVICE_PACK=$(grep "^service_pack_code: " $J5DIR/j5-app.yml | sed 's/service_pack_code: \([0-9][0-9]*\).*$/\1/')
