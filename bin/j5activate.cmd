@@ -6,8 +6,14 @@ if "%1"=="/?" goto usage
 if "%1"=="-h" goto usage
 if "%1"=="/h" goto usage
 if "%1"=="--help" goto usage
+rem --python3 flag is no longer used and can be removed
+rem but I'm leaving it here for "backwards compatibility" with older commits
 if "%1"=="--python3" (
     set activate_args=--python3
+    shift
+)
+if "%1"=="--python2" (
+    set activate_args=--python2
     shift
 )
 set "first_arg=%1"
@@ -48,7 +54,7 @@ set src_dir=
 goto :end
 
 :usage
-@echo syntax j5activate [--python3] [framework-src-label]
+@echo syntax j5activate [--python2] [framework-src-label]
 goto :end
 
 :error
