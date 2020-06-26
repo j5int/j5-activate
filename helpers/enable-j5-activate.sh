@@ -18,8 +18,12 @@ j5activate() {
         case "$arg" in
             -h|-?|--help)
                show_syntax=1; shift;;
+            # --python3 is no longer use and can be removed
+            # but I'm leaving it here for "backwards-compatibility" with older commits
             --python3)
                activate_args=--python3; shift;;
+            --python2)
+               activate_args=--python2; shift;;
             -*)
                colored_echo red "Unexpected options $arg" >&2
                show_syntax=1; shift;;
@@ -32,7 +36,7 @@ j5activate() {
         esac
     done
     if [ "$show_syntax" != "" ]; then
-        echo syntax j5activate "[framework-src-label]"
+        echo syntax j5activate "[--python2]" "[framework-src-label]"
         return 1
     elif [ "$target_version" == "" ]; then
         J5DIR="$J5_PARENT_GIT_DIR/j5-framework/j5/src/"
