@@ -32,6 +32,7 @@ j5activate() {
                target_version="$arg"; shift;;
         esac
     done
+    export J5_ACTIVATED_VERSION=$target_version
     if [ "$show_syntax" != "" ]; then
         echo syntax j5activate "[--python2]" "[framework-src-label]"
         return 1
