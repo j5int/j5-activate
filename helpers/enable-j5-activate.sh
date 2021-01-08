@@ -93,7 +93,7 @@ _j5switch()
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [ $COMP_CWORD -eq 1 ]
         then
-            COMPREPLY=( $(compgen -W "$(find ~/work/git/ -maxdepth 1 -type d -printf "%f\n")" -- $cur ))
+            COMPREPLY=( $(compgen -W "$(find $J5_PARENT_GIT_DIR -maxdepth 1 -type d -printf "%f\n")" -- $cur ))
         else
             COMPREPLY=( $(compgen -W "$(find ~/j5-homes -maxdepth 1 -type d -printf "%f\n")" -- $cur ))
     fi
@@ -104,7 +104,7 @@ _j5activate()
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [ $COMP_CWORD -eq 1 ]
         then
-            COMPREPLY=( $(compgen -W "$(find ~/j5-environments/ -maxdepth 1 -type d -printf "%f\n" | grep -e "[0-9][0-9].[0-9]")" -- $cur ))
+            COMPREPLY=( $(compgen -W "$(find $J5_PARENT_GIT_DIR -maxdepth 1 -type d -printf "%f\n" | grep "j5-framework-" | cut -d- -f3-)" -- $cur ))
         else
             COMPREPLY=( $(compgen -W "$(echo "--python2 --python3 -h -? --help" | tr " " "\n")" -- $cur ))
     fi
