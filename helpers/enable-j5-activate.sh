@@ -78,5 +78,38 @@ j5activate() {
             return 1
         fi
     fi
+
+  complete -F _j5switch j5switch
+  complete -F _j5setup j5setup
+
+
+}
+_j5setup()
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=( $(compgen -W "$(echo "--no-ui --skip-build --help --skip-docs --with-ui --locale --copy-from-custom-staging-dir --no-service-startup --no-db-migration --no-schema-management --admin-password --ignore-installed-apps-requirement --dry-run" | tr " " "\n")" -- $cur ))
 }
 
+_j5switch()
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    if [ $COMP_CWORD -eq 1 ]
+        then
+            COMPREPLY=( $(compgen -W "$(find ~/work/git/ -maxdepth 1 -type d -printf "%f\n")" -- $cur ))
+        else
+            COMPREPLY=( $(compgen -W "$(find ~/j5-homes -maxdepth 1 -type d -printf "%f\n")" -- $cur ))
+    fi
+}
+
+_j5activate()
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    if [ $COMP_CWORD -eq 1 ]
+        then
+            COMPREPLY=( $(compgen -W "$(find ~/j5-environments/ -maxdepth 1 -type d -printf "%f\n" | grep -e "[0-9][0-9].[0-9]")" -- $cur ))
+        else
+            COMPREPLY=( $(compgen -W "$(echo "--python2 --python3 -h -? --help" | tr " " "\n")" -- $cur ))
+    fi
+}
+
+complete -F _j5activate j5activate
