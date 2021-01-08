@@ -27,12 +27,9 @@ j5activate() {
             -*)
                colored_echo red "Unexpected options $arg" >&2
                show_syntax=1; shift;;
-            [0-9][0-9][.][0-9])
+            *)
                [ "$target_version" != "" ] && { colored_echo red "Only one j5 version can be specified" >&2; break; }
                target_version="$arg"; shift;;
-            *)
-               colored_echo red "Unexpected argument $arg" >&2
-               show_syntax=1; shift;;
         esac
     done
     if [ "$show_syntax" != "" ]; then
