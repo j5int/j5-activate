@@ -66,6 +66,7 @@ j5activate() {
         J5VER=j5-$(grep "^version_code: " $J5DIR/j5-app.yml | sed 's/version_code: \(.*\)/\1/')
         J5_SERVICE_PACK=$(grep "^service_pack_code: " $J5DIR/j5-app.yml | sed 's/service_pack_code: \([0-9][0-9]*\).*$/\1/')
         [ "$J5_SERVICE_PACK" != "0" ] && J5VER="$J5VER.$J5_SERVICE_PACK"
+        [ "$J5VER" == "30.0" ] && J5VER="30"
         [ "$WORKON_HOME" == "" ] && WORKON_HOME="$HOME/.virtualenvs"
         if [ -d "$WORKON_HOME/$J5VER" ]; then
             colored_echo yellow "A virtual environment $J5VER seems to exist - will try workon $J5VER" >&2
