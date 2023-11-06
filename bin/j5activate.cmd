@@ -1,6 +1,7 @@
 @echo off
 set activate_args=
 set "activate_path=%~dp0"
+set src_suffix=framework
 if "%1"=="-?" goto usage
 if "%1"=="/?" goto usage
 if "%1"=="-h" goto usage
@@ -16,22 +17,26 @@ if "%1"=="--python2" (
     set activate_args=--python2
     shift
 )
+if "%1"=="--server" (
+    set src_suffix=server
+    shift
+)
 set "first_arg=%1"
 if "%first_arg:~0,1%"=="-" goto usage
 if "%first_arg:~0,1%"=="/" goto usage
 
 if [%1]==[] goto nolabel
 
-set "src_dir=%activate_path%\..\..\j5-framework-%1"
-if not exist "%src_dir%" echo Could not find j5-framework-%1 >&2 & goto :error
+set "src_dir=%activate_path%\..\..\j5-%src_suffix%-%1"
+if not exist "%src_dir%\j5\src\j5-app.yml" echo Could not find j5-%src_suffix%-%1 >&2 & goto :error
 goto :activate
 
 :nolabel
 
-set "src_dir=%activate_path%\..\..\j5-framework"
-if exist "%src_dir%" goto :activate
+set "src_dir=%activate_path%\..\..\j5-%src_suffix%"
+if exist "%src_dir%\j5\src\j5-app.yml" goto :activate
 
-echo Could not find j5-framework, searching for alternative locations
+echo Could not find j5-%src_suffix%, searching for alternative locations
 set "tmpfile=%tmp%\j5path_%RANDOM%.txt"
 powershell -NoProfile -ExecutionPolicy unrestricted -File "%activate_path%\find_j5_src.ps1" > "%tmpfile%"
 set failure=%errorlevel%
@@ -54,7 +59,7 @@ set src_dir=
 goto :end
 
 :usage
-@echo syntax j5activate [--python2] [framework-src-label]
+@echo syntax j5activate [--python2] [--server] [framework-src-label]
 goto :end
 
 :error
