@@ -14,6 +14,7 @@ j5activate() {
     show_syntax=""
     activate_args=""
     target_version=""
+    src_suffix="framework"
     for arg in "$@"; do
         case "$arg" in
             -h|-?|--help)
@@ -24,6 +25,8 @@ j5activate() {
                activate_args=--python3; shift;;
             --python2)
                activate_args=--python2; shift;;
+             --server)
+               src_suffix="server"; shift;;
             -*)
                colored_echo red "Unexpected options $arg" >&2
                show_syntax=1; shift;;
@@ -37,17 +40,17 @@ j5activate() {
         echo syntax j5activate "[--python2]" "[framework-src-label]"
         return 1
     elif [ "$target_version" == "" ]; then
-        J5DIR="$J5_PARENT_GIT_DIR/j5-framework/j5/src/"
+        J5DIR="$J5_PARENT_GIT_DIR/j5-$src_suffix/j5/src/"
         if [ ! -d "$J5DIR" ]; then
            src_markers=($J5_PARENT_GIT_DIR/*/j5/src/j5-app.yml)
            if [ "${#src_markers[@]}" == 1 ] && [ -f "${src_markers[0]}" ]; then
                J5DIR="`dirname "${src_markers[0]}"`"
-               colored_echo blue "Found j5 framework at $J5DIR" >&2
+               colored_echo blue "Found j5 $src_suffix at $J5DIR" >&2
            elif [ "${#src_markers[@]}" == 0 ] || [ ! -f "${src_markers[0]}" ]; then
-               colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2
+               colored_echo red "Could not locate j5 $src_suffix - $J5DIR does not exist" >&2
                return 1
            else
-               colored_echo red "Found multiple j5 framework directories. Cannot determine which to activate" >&2
+               colored_echo red "Found multiple j5 $src_suffix directories. Cannot determine which to activate" >&2
                for src_marker in "${src_markers[@]}"; do
                    src_dir="`dirname "${src_marker}"`"
                    src_dir="`readlink -f "${src_dir}/../../"`"
@@ -57,8 +60,8 @@ j5activate() {
            fi
         fi
     else
-        J5DIR="$J5_PARENT_GIT_DIR/j5-framework-$target_version/j5/src/"
-        [ -d "$J5DIR" ] || { colored_echo red "Could not locate j5 framework - $J5DIR does not exist" >&2 ; return 1 ; }
+        J5DIR="$J5_PARENT_GIT_DIR/j5-$src_suffix-$target_version/j5/src/"
+        [ -d "$J5DIR" ] || { colored_echo red "Could not locate j5 $src_suffix - $J5DIR does not exist" >&2 ; return 1 ; }
     fi
     if [ -f "$J5DIR/Scripts/j5activate.sh" ]; then
         source "$J5DIR/Scripts/j5activate.sh" $activate_args
@@ -72,7 +75,7 @@ j5activate() {
             workon "$J5VER"
             colored_echo blue "Note that this is a version of j5 that does not support a full j5 environment" >&2
         else
-            colored_echo red "The j5 framework version in $J5DIR does not support j5activate, and no legacy virtualenv was found" >&2
+            colored_echo red "The j5 $src_suffix version in $J5DIR does not support j5activate, and no legacy virtualenv was found" >&2
             return 1
         fi
     fi
@@ -104,7 +107,7 @@ _j5activate()
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [ $COMP_CWORD -eq 1 ]
         then
-            COMPREPLY=( $(compgen -W "$(find $J5_PARENT_GIT_DIR -maxdepth 1 -type d -printf "%f\n" | grep "j5-framework-" | cut -d- -f3-)" -- $cur ))
+            COMPREPLY=( $(compgen -W "$(find $J5_PARENT_GIT_DIR -maxdepth 1 -type d -printf "%f\n" | grep "j5-framework-|j5-server-" | cut -d- -f3-)" -- $cur ))
         else
             COMPREPLY=( $(compgen -W "$(echo "--python2 --python3 -h -? --help" | tr " " "\n")" -- $cur ))
     fi
